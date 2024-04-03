@@ -19,7 +19,7 @@ contract UserAccountData is Ownable {
 
     mapping(address => Account) public accounts;
 
-    constructor(address _token) {
+    constructor(address _token)  Ownable(msg.sender) {
         token = Token(_token);
     }
 
@@ -37,8 +37,13 @@ contract UserAccountData is Ownable {
     accounts[user] = newUser;
 
     token.mint(user, 1000);
-}
+    }
 
+
+    
+    function getAccount(address account) external view returns (Account memory) {
+        return accounts[account];
+    }
 
     function activateUser(address user) external onlyOwner {
         accounts[user].isActive = true;

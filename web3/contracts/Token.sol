@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Define ERC20 token
 contract Token is ERC20, Ownable {
-    constructor() ERC20("MyToken", "MTK") {}
+    constructor() ERC20("PAP", "PAP") Ownable(msg.sender) {}
 
     mapping(address => bool) public ninted;
 

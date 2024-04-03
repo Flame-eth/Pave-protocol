@@ -20,10 +20,10 @@ contract LendingPool is Ownable {
     event Borrow(address indexed user, uint256 amount);
     event Repay(address indexed user, uint256 amount);
 
-    constructor(address _token, address usdc, address _userAccountDataContract, uint256 _interestRate) {
-        token = IERC20(_token);
-        usdc = IERC20(usdc);
-        serAccountDataContract = UserAccountData(_userAccountDataContract);
+    constructor(address _token, address _usdc, address _userAccountDataContract, uint256 _interestRate)  Ownable(msg.sender) {
+        token = Token(_token);
+        usdc = USDC(_usdc);
+        userAccountDataContract = UserAccountData(_userAccountDataContract);
         interestRate = _interestRate;
     }
 
@@ -32,15 +32,14 @@ contract LendingPool is Ownable {
         require(token.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
         
         token.transferFrom(msg.sender, address(this), amount);
-        userAccountDataContract.Account storage account = userAccountDataContract.accounts[msg.sender];
+        UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         account.collateralBalance += amount;
-        balances[msg.sender] += amount;
         emit Deposit(msg.sender, amount);
     }
 
     function withdraw(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
-        userAccountDataContract.Account storage account = userAccountDataContract.accounts[msg.sender];
+         UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.collateralBalance >= amount, "Insufficient balance");
         require(account.borrowedAmount <= amount, "Collaterral in use balance");
         token.transfer(msg.sender, amount);
@@ -49,7 +48,7 @@ contract LendingPool is Ownable {
 
     function borrow(uint256 amount) external {
     require(amount > 0, "Amount must be greater than 0");
-    userAccountDataContract.Account storage account = userAccountDataContract.accounts[msg.sender];
+     UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
     require(account.collateralBalance >= amount, "Insufficient collateral");
 
     uint256 poolBalance = usdc.balanceOf(address(this));
@@ -59,14 +58,14 @@ contract LendingPool is Ownable {
     account.usdcBalance += amount;
 
     usdc.transfer(msg.sender, amount);
-    emit Borrow(msg.sender, amount)
+    emit Borrow(msg.sender, amount);
     }
 
-    function repay(uint256 amount) {
+    function repay(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
-        userAccountDataContract.Account storage account = userAccountDataContract.accounts[msg.sender];
+         UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.usdcBalance >= amount, "Insufficient balance");
-        require(usds.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
+        require(usdc.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
         account.borrowedAmount -= amount;
         account.usdcBalance -= amount;
         usdc.transferFrom(msg.sender, address(this), amount);
@@ -74,18 +73,18 @@ contract LendingPool is Ownable {
 
     }
 
-    function repaywithCollateral(uint256 amount) {
+    function repaywithCollateral(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
-        userAccountDataContract.Account storage account = userAccountDataContract.accounts[msg.sender];
+         UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.collateralBalance >= amount, "Insufficient collateral");
         account.borrowedAmount -= amount;
         account.collateralBalance -= amount;
-        toekn.transferFrom(msg.sender, address(this), amount);
+        token.transferFrom(msg.sender, address(this), amount);
         emit Repay(msg.sender, amount);
     }
 
-    function getUser(address user) external view returns (userAccountDataContract.Account) {
-         userAccountDataContract.Account storage account = userAccountDataContract.accounts[msg.sender];
+    function getUser() external view returns (UserAccountData.Account memory) {
+          UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
          return account;
     }
 
@@ -95,7 +94,7 @@ contract LendingPool is Ownable {
 
     function setInterestRate(uint256 _newRate) public onlyOwner {
         interestRate = _newRate;
-         emit InterestRateChanged(newRate);
+         emit InterestRateChanged(_newRate);
 
     }
 }
