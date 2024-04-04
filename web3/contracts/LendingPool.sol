@@ -11,7 +11,7 @@ contract LendingPool is Ownable {
     Token public token;
     USDC public usdc;
     UserAccountData public userAccountDataContract;
-    uint256 public interestRate;
+    uint256 public interestRate = 20;
    
 
     event Deposit(address indexed user, uint256 amount);
@@ -20,11 +20,11 @@ contract LendingPool is Ownable {
     event Borrow(address indexed user, uint256 amount);
     event Repay(address indexed user, uint256 amount);
 
-    constructor(address _token, address _usdc, address _userAccountDataContract, uint256 _interestRate)  Ownable(msg.sender) {
+    constructor(address _token, address _usdc, address _userAccountDataContract)  Ownable(msg.sender) {
         token = Token(_token);
         usdc = USDC(_usdc);
         userAccountDataContract = UserAccountData(_userAccountDataContract);
-        interestRate = _interestRate;
+        // interestRate = _interestRate;
     }
 
     function deposit(uint256 amount) external {

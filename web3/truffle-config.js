@@ -41,10 +41,10 @@
  * https://trufflesuite.com/docs/truffle/getting-started/using-the-truffle-dashboard/
  */
 
-// require('dotenv').config();
-// const { MNEMONIC, PROJECT_ID } = process.env;
+require('dotenv').config();
+const { MNEMONIC, PROJECT_ID, SCROLLSCAN } = process.env;
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
   /**
@@ -89,6 +89,13 @@ module.exports = {
     //   timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
     //   skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     // },
+
+    scrollSepolia: {
+      provider: () =>
+        new HDWalletProvider(MNEMONIC, "https://sepolia-rpc.scroll.io/", 2),
+      network_id: '*',
+    },
+
     //
     // Useful for private networks
     // private: {
@@ -138,4 +145,14 @@ module.exports = {
   //     }
   //   }
   // }
+
+  plugins: [
+    'truffle-plugin-verify'
+  ],
+
+  api_keys: {
+    scrollScan: SCROLLSCAN
+  }
+
+
 };
