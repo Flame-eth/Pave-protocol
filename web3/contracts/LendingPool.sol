@@ -8,8 +8,8 @@ import "./Token.sol";
 import "./USDC.sol";
 
 contract LendingPool is Ownable {
-    Token public token;
-    USDC public usdc;
+    PAPCoin public token;
+    PAPUSDC public usdc;
     UserAccountData public userAccountDataContract;
     uint256 public interestRate = 20;
    
@@ -21,8 +21,8 @@ contract LendingPool is Ownable {
     event Repay(address indexed user, uint256 amount);
 
     constructor(address _token, address _usdc, address _userAccountDataContract)  Ownable(msg.sender) {
-        token = Token(_token);
-        usdc = USDC(_usdc);
+        token = PAPCoin(_token);
+        usdc = PAPUSDC(_usdc);
         userAccountDataContract = UserAccountData(_userAccountDataContract);
         // interestRate = _interestRate;
     }

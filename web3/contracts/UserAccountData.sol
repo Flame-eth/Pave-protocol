@@ -15,12 +15,12 @@ contract UserAccountData is Ownable {
         bool isActive;
     }
 
-    Token public token;
+    PAPCoin public token;
 
     mapping(address => Account) public accounts;
 
     constructor(address _token)  Ownable(msg.sender) {
-        token = Token(_token);
+        token = PAPCoin(_token);
     }
 
    function registerUser(address user) public {

@@ -5,15 +5,17 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Define ERC20 token
-contract Token is ERC20, Ownable {
-    constructor() ERC20("PAP", "PAP") Ownable(msg.sender) {}
+contract PAPCoin is ERC20, Ownable {
+     constructor(uint256 initialSupply) ERC20("PAPCoin", "PAP") Ownable(msg.sender) {
+        _mint(msg.sender, initialSupply * 10**decimals());
+    }
 
-    mapping(address => bool) public ninted;
+    mapping(address => bool) public minted;
 
     function mint(address to, uint256 amount) external {
-        require(ninted[to] == false, "User already minted");
-        ninted[to] = true;
-        _mint(to, amount);
+        require(minted[to] == false, "User already minted");
+        minted[to] = true;
+        _mint(to, amount * 10**decimals());
 
     }
 }
