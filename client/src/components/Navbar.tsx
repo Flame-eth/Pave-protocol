@@ -2,7 +2,6 @@
 import { Menu, X } from "lucide-react";
 import { FC, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "./ui/button";
 import {
   Sheet,
   SheetClose,
@@ -54,8 +53,8 @@ const Navbar: FC = () => {
   return (
     <div className=" bg-home_gradient w-full  ">
       <Sheet>
-        <nav className="flex justify-between container py-5  items-center">
-          <div className="flex items-center gap-[15px] sm:gap-[30px]">
+        <nav className="flex container w-full py-5  items-center">
+          <div className="flex items-center gap-[15px] sm:gap-[30px] w-full">
             <div className="block lg:hidden">
               <SheetTrigger>
                 <Menu
@@ -66,8 +65,8 @@ const Navbar: FC = () => {
                 />
               </SheetTrigger>
             </div>
-            <div className="flex items-center gap-20 xl:gap-[108px]">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between w-full gap-20 xl:gap-[108px]">
+              <div className="flex items-center gap-3 w-full">
                 {/* <img src={Logo} alt="" className="h-10 w-7" /> */}
                 <p className="font-Jakarta text-white text-base font-semibold sm:text-xl sm:font-normal sm:leading-7 ">
                   Pave Protocol
@@ -95,19 +94,7 @@ const Navbar: FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-[49px]">
-            <Link to={"/auth/login"} className="relative p-0.5 hidden sm:flex">
-              <div className="absolute inset-0 bg-gradient-to-r from-home_border_gradient_color_1 to-home_border_gradient_color_2  rounded-lg"></div>
-              <Button className="text-white relative bg-home_gradient hover:bg-transparent font-Jakarta font-medium text-base  rounded-[5px] px-5 py-[10px]  shadow-xl shadow-home_border_gradient">
-                Hire Talent
-              </Button>
-            </Link>
-            <Link to={"/auth/login"}>
-              <Button className="text-white font-Jakarta bg-primary_blue hover:text-primary_blue hover:bg-white border-primary_blue border  rounded-[5px] font-medium text-base px-5 py-[10px]">
-                Log In
-              </Button>
-            </Link>
-          </div>
+          
         </nav>
         <div className="  bg-gradient-to-r from-home_border_gradient_color_1 to-home_border_gradient_color_2 tr w-full h-[1px]"></div>
         {/* {showSmSidebar && ( */}
@@ -131,21 +118,6 @@ const Navbar: FC = () => {
                     </p>
                   </div>
                 </div>
-                {showMdSidebar && (
-                  <div className="flex items-center gap-5">
-                    <Link to={"/auth/login"} className="relative p-0.5">
-                      <div className="absolute inset-0 bg-gradient-to-r from-home_border_gradient_color_1 to-home_border_gradient_color_2  rounded-lg"></div>
-                      <Button className="text-white relative bg-home_gradient hover:bg-transparent font-Jakarta font-medium text-base  rounded-[5px] px-5 py-[10px]  shadow-xl shadow-home_border_gradient">
-                        Hire Talent
-                      </Button>
-                    </Link>
-                    <Link to={"/auth/login"}>
-                      <Button className="text-white font-Jakarta bg-primary_blue hover:text-primary_blue hover:bg-white border-primary_blue border  rounded-[5px] font-medium text-base px-8 py-[10px]">
-                        Log In
-                      </Button>
-                    </Link>
-                  </div>
-                )}
               </div>
               <div className="  bg-gradient-to-r from-home_border_gradient_color_1 to-home_border_gradient_color_2 tr w-full h-[1px]"></div>
             </SheetHeader>
@@ -166,21 +138,6 @@ const Navbar: FC = () => {
                 </Link>
               ))}
             </div>
-            {showSmSidebar && (
-              <div className="flex items-center gap-4">
-                <Link to={"/auth/login"} className="relative p-0.5 w-1/2">
-                  <div className="absolute inset-0 bg-gradient-to-r from-home_border_gradient_color_1 to-home_border_gradient_color_2  rounded-lg"></div>
-                  <Button className="text-white w-full relative bg-home_gradient hover:bg-transparent font-Jakarta font-medium text-base  rounded-[5px] px-5 py-[10px]  shadow-xl shadow-home_border_gradient">
-                    <SheetClose>Hire Talent</SheetClose>
-                  </Button>
-                </Link>
-                <Link to={"/auth/login"} className=" w-1/2 px-5 py-[10px]">
-                  <Button className="text-white  font-Jakarta bg-primary_blue hover:text-primary_blue hover:bg-white border-primary_blue border  rounded-[5px] font-medium text-base ">
-                    <SheetClose>Log In</SheetClose>
-                  </Button>
-                </Link>
-              </div>
-            )}
           </SheetContent>
         </SheetOverlay>
       </Sheet>

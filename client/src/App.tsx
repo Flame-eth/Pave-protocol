@@ -1,39 +1,37 @@
-import { useEffect } from 'react';
-import './App.css'
+import { useEffect } from "react";
+import "./App.css";
 import {
   Outlet,
   RouterProvider,
   createBrowserRouter,
   useLocation,
 } from "react-router-dom";
-import Home from './pages/Home';
-import { useAccount } from 'wagmi';
-import Connect from './pages/Connect';
+import Home from "./pages/Home";
+import { useAccount } from "wagmi";
+import Connect from "./pages/Connect";
+import Navbar from "./components/Navbar";
 
 function App() {
   const Layout = () => {
     const path = useLocation().pathname;
 
-    const {address} = useAccount()
+    const { address } = useAccount();
 
     useEffect(() => {
       window.scrollTo(0, 0);
     }, [path]);
     return (
       <div className="">
-        {/* <Navbar /> */}
-        {
-          !address ? (
-            <>
+        <Navbar />
+        {!address ? (
+          <>
             <Connect />
-            </>
-          ) : (
-            <>
-        <Outlet />
-            </>
-          )
-        }
-        {/* <Footer /> */}
+          </>
+        ) : (
+          <>
+            <Outlet />
+          </>
+        )}
       </div>
     );
   };
@@ -47,14 +45,11 @@ function App() {
           path: "/",
           element: <Home />,
         },
-       
       ],
     },
-  
-   
   ]);
 
   return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
