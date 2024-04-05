@@ -36,7 +36,7 @@ contract UserAccountData is Ownable {
     
     accounts[user] = newUser;
 
-    token.mint(user, 1000);
+    token.mint(user, 1000 * 10**18);
     }
 
 
