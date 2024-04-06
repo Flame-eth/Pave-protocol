@@ -40,3 +40,18 @@
 .read-the-docs {
   color: #888;
 } */
+
+
+/* For WebKit based browsers (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #060D11 /*#f1f1f1; */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #060D11; /* Color of the scrollbar thumb */
+  border-radius: 50px;
+}
