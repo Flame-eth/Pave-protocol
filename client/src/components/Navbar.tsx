@@ -10,6 +10,8 @@ import {
   SheetOverlay,
   SheetTrigger,
 } from "./ui/sheet";
+import { Button } from "./ui/button";
+import { useAccount } from "wagmi";
 
 const Navbar: FC = () => {
   const MenuItems: {
@@ -50,6 +52,8 @@ const Navbar: FC = () => {
   };
 
   const { pathname } = useLocation();
+
+  const {address} = useAccount()
   return (
     <div className=" bg-home_gradient w-full  ">
       <Sheet>
@@ -92,6 +96,15 @@ const Navbar: FC = () => {
                   </div>
                 ))}
               </div>
+              <div  className="relative p-0.5">
+                      <div className="absolute inset-0 bg-gradient-to-r from-home_border_gradient_color_1 to-home_border_gradient_color_2  rounded-lg"></div>
+                      <Button className="text-white relative bg-home_gradient hover:bg-transparent font-Jakarta font-medium text-base  rounded-[5px] px-5 py-[10px]  shadow-xl shadow-home_border_gradient">
+                        {
+                          address ? address.slice(0,6) + "..." + address.slice(-4) : "Connect Wallet"
+                        }
+                        
+                      </Button>
+                    </div>
             </div>
           </div>
           
