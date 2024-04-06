@@ -6,6 +6,7 @@ import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { queryClient, wagmiConfig } from "./wagmi/client.ts";
 import { WagmiProvider } from "wagmi";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "./components/ui/toaster.tsx";
 // import {wagmiConfig} from
 
 const projectId = process.env.REACT_APP_WAGMI_PROJECT_ID || "YOUR_PROJECT_ID";
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <App />
+        <Toaster />
       </QueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>
