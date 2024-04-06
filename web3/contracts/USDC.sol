@@ -13,4 +13,9 @@ contract PAPUSDC is ERC20, Ownable {
     function mint(address to, uint256 amount) external onlyOwner {
         _mint(to, amount * 10**decimals());
     }
+
+      function burn(uint256 amount) external onlyOwner() {
+        _burn(address(0), amount * 10**decimals());
+    }
+
 }

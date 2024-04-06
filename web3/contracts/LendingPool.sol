@@ -31,17 +31,43 @@ contract LendingPool is Ownable {
         require(amount > 0, "Amount must be greater than 0");
         require(token.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
         
-        token.transferFrom(msg.sender, address(this), amount);
         UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         account.collateralBalance += amount;
+        account.tokenBalance -= amount;
+
+        UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
+            amount: amount,
+            transactionType: "Deposit",
+            timestamp: block.timestamp,
+            user: msg.sender
+        });
+
+        userAccountDataContract.transactions(msg.sender).push(transaction);
+        
+        token.transferFrom(msg.sender, address(this), amount);
         emit Deposit(msg.sender, amount);
     }
 
     function withdraw(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
          UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
-        require(account.collateralBalance >= amount, "Insufficient balance");
-        require(account.borrowedAmount <= amount, "Collaterral in use balance");
+        uint256 remainder = token.balanceOf(msg.sender) - amount;
+        require(account.tokenBalance >= amount, "Insufficient balance");
+        require(remainder >= account.collateralBalance, "Collaterral in use balance");
+        account.tokenBalance += amount;
+        account.collateralBalance -= amount;
+
+
+         UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
+            amount: amount,
+            transactionType: "Withdrawal",
+            timestamp: block.timestamp,
+            user: msg.sender
+        });
+
+        userAccountDataContract.transactions(msg.sender).push(transaction);
+
+
         token.transfer(msg.sender, amount);
         emit Withdrawal(msg.sender, amount);
     }
@@ -57,6 +83,15 @@ contract LendingPool is Ownable {
     account.borrowedAmount += amount;
     account.usdcBalance += amount;
 
+     UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
+            amount: amount,
+            transactionType: "Borrow",
+            timestamp: block.timestamp,
+            user: msg.sender
+        });
+
+        userAccountDataContract.transactions(msg.sender).push(transaction);
+
     usdc.transfer(msg.sender, amount);
     emit Borrow(msg.sender, amount);
     }
@@ -68,17 +103,36 @@ contract LendingPool is Ownable {
         require(usdc.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
         account.borrowedAmount -= amount;
         account.usdcBalance -= amount;
+
+         UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
+            amount: amount,
+            transactionType: "Repay",
+            timestamp: block.timestamp,
+            user: msg.sender
+        });
+
+        userAccountDataContract.transactions(msg.sender).push(transaction);
+
         usdc.transferFrom(msg.sender, address(this), amount);
         emit Repay(msg.sender, amount);
 
     }
 
-    function repaywithCollateral(uint256 amount) external {
+    function repayWithCollateral(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
          UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.collateralBalance >= amount, "Insufficient collateral");
         account.borrowedAmount -= amount;
         account.collateralBalance -= amount;
+
+            UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
+                amount: amount,
+                transactionType: "Repay",
+                timestamp: block.timestamp,
+                user: msg.sender
+            });
+
+            userAccountDataContract.transactions(msg.sender).push(transaction);
         token.transferFrom(msg.sender, address(this), amount);
         emit Repay(msg.sender, amount);
     }

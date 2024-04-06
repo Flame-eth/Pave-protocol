@@ -53,7 +53,7 @@ const RecordCard: FC<RecordCardProps> = ({
               <span className=" text-primary_blue hover:underline cursor-pointer font-semibold">
                 here
               </span>{" "}
-              to claim 500 PAVECoin for free.
+              to claim 1000 PAVECoin for free.
             </p>
             <div className=" bg-white border border-dark_green flex gap-2 justify-between w-full rounded-lg p-2 items-center">
               <Input

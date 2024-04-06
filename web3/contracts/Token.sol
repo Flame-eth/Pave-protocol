@@ -18,4 +18,9 @@ contract PAPCoin is ERC20, Ownable {
         _mint(to, amount * 10**decimals());
 
     }
+
+    function burn(uint256 amount) external onlyOwner() {
+        _burn(address(0), amount * 10**decimals());
+    }
+
 }

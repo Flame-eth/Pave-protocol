@@ -15,9 +15,19 @@ contract UserAccountData is Ownable {
         bool isActive;
     }
 
+    struct Transaction {
+        address user;
+        uint256 amount;
+        uint256 timestamp;
+        string transactionType;
+    }
+
+
+
     PAPCoin public token;
 
     mapping(address => Account) public accounts;
+    mapping(address => Transaction[]) public transactions;
 
     constructor(address _token)  Ownable(msg.sender) {
         token = PAPCoin(_token);
@@ -36,7 +46,7 @@ contract UserAccountData is Ownable {
     
     accounts[user] = newUser;
 
-    token.mint(user, 1000 * 10**18);
+    token.mint(user, 1000 * 10** token.decimals());
     }
 
 
