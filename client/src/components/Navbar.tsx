@@ -23,16 +23,8 @@ const Navbar: FC = () => {
       link: "/",
     },
     {
-      name: "Deposit",
-      link: "/deposit",
-    },
-    {
-      name: "Borrow",
-      link: "/borrow",
-    },
-    {
-      name: "Withdraw",
-      link: "/withdraw",
+      name: "Transactions",
+      link: "/transactions",
     },
   ];
 

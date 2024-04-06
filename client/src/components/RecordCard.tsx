@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "./ui/button";
+import DataCard from "./DataCard";
 
 interface RecordCardProps {
   title: string;
@@ -98,7 +99,7 @@ const RecordCard: FC<RecordCardProps> = ({
             supply: (
               <div className="">
                 {supplyData?.length ? (
-                  supplyData?.length
+                  <DataCard type="supply" name="PAPCoin" amount={480} />
                 ) : (
                   <p className=" text-dark_green/70 font-normal text-base">
                     Nothing supplied yet
@@ -109,7 +110,7 @@ const RecordCard: FC<RecordCardProps> = ({
             borrow: (
               <div className="">
                 {borrowData?.length ? (
-                  supplyData?.length
+                 <DataCard type="borrow" name="PAPCoin" amount={480} />
                 ) : (
                   <p className=" text-dark_green/70 font-normal text-base">
                     Nothing borrowed yet

@@ -10,9 +10,7 @@ import Home from "./pages/Home";
 import { useAccount } from "wagmi";
 import Connect from "./pages/Connect";
 import Navbar from "./components/Navbar";
-import Borrow from "./pages/Borrow";
-import Deposit from "./pages/Deposit";
-import Withdraw from "./pages/Withdraw";
+import Transactions from "./pages/Transactions";
 
 function App() {
   const Layout = () => {
@@ -49,16 +47,8 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/borrow",
-          element: <Borrow />,
-        },
-        {
-          path: "/deposit",
-          element: <Deposit />,
-        },
-        {
-          path: "/withdraw",
-          element: <Withdraw />,
+          path: "/transactions",
+          element: <Transactions />,
         },
       ],
     },
