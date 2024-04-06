@@ -6,8 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { PlusSquare } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
 interface RecordCardProps {
   title: string;
@@ -27,7 +27,15 @@ const RecordCard: FC<RecordCardProps> = ({
         <CardTitle className=" font-Jakarta font-semibold leading-10 tracking-wider text-2xl text-dark_green ">
           {title}
         </CardTitle>
+        <Dialog>
+          <DialogTrigger>
         <PlusSquare className="w-8 h-8 text-dark_green hover:text-primary_blue cursor-pointer" />
+          </DialogTrigger>
+          <DialogContent>
+            <p className="text-dark_green">Add a new record</p>
+          </DialogContent>
+
+        </Dialog>
       </CardHeader>
       <CardContent className="space-y-2">
         {
