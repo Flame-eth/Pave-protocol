@@ -23,8 +23,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <App />
-        <Toaster />
       </QueryClientProvider>
     </WagmiProvider>
+    <Toaster />
   </React.StrictMode>
 );

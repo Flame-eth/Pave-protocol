@@ -39,7 +39,7 @@ contract UserAccountData is Ownable {
     Account memory newUser;
     newUser.collateralBalance = 0;
     newUser.borrowedAmount = 0;
-    newUser.tokenBalance = 1000;
+    newUser.tokenBalance =  1000 * 10** token.decimals();
     newUser.usdcBalance = 0;
     newUser.interestIndex = 0;
     newUser.isActive = true;
@@ -47,6 +47,27 @@ contract UserAccountData is Ownable {
     accounts[user] = newUser;
 
     token.mint(user, 1000 * 10** token.decimals());
+    }
+
+    function addTransaction(address user, uint256 amount, string memory transactionType) public {
+        Transaction memory newTransaction = Transaction({
+            user: user,
+            amount: amount,
+            timestamp: block.timestamp,
+            transactionType: transactionType
+        });
+
+        transactions[user].push(newTransaction);
+    }
+
+     function updateAccount(address user, uint256 collateralBalance, uint256 borrowedAmount, uint256 tokenBalance, uint256 usdcBalance, uint256 interestIndex, bool isActive) public {
+        Account storage account = accounts[user];
+        account.collateralBalance = collateralBalance;
+        account.borrowedAmount = borrowedAmount;
+        account.tokenBalance = tokenBalance;
+        account.usdcBalance = usdcBalance;
+        account.interestIndex = interestIndex;
+        account.isActive = isActive;
     }
 
 

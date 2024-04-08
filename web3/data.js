@@ -19,3 +19,15 @@
 
 
 // LendingPool: https://sepolia.scrollscan.com/address/0x16f91Fe33597240588e97fDe814B32289bC5a6f4#code
+
+
+
+
+
+{/*
+Deploying contracts with the account: 0xBb1d5e7Eae302DA22D89B5e87FD619dA8ee47ab7
+Token deployed to: 0x04756ba938D6b2E4F679a0BDC30A41F65C2b01d8
+USDC deployed to: 0x97eB8e487e50FFA569E0F8915305205514F643aF
+UserAccountData deployed to: 0xBDaa0814B15254985850A55b574e1c059C04773E
+LendingPool deployed to: 0xE7C76222ab9DA425A693D7C5B69547dBD3777be6
+*/}

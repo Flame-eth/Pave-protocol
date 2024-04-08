@@ -14,10 +14,10 @@ const Home: FC = () => {
           <TabsTrigger className="data-[state=active]:text-home_gradient data-[state=active]:font-bold" value="borrow">Borrow</TabsTrigger>
         </TabsList>
         <TabsContent value="supply">
-          <RecordCard title="Your Supplies" type="supply" supplyData={[""]}  />
+          <RecordCard title="Your Supplies" type="supply"  />
         </TabsContent>
         <TabsContent value="borrow">
-          <RecordCard title="Your Borrows" type="borrow" borrowData={[""]} />
+          <RecordCard title="Your Borrows" type="borrow" />
         </TabsContent>
       </Tabs>
     </div>

@@ -27,23 +27,27 @@ contract LendingPool is Ownable {
         // interestRate = _interestRate;
     }
 
+
     function deposit(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
         require(token.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
         
         UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
-        account.collateralBalance += amount;
-        account.tokenBalance -= amount;
-
-        UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
-            amount: amount,
-            transactionType: "Deposit",
-            timestamp: block.timestamp,
-            user: msg.sender
-        });
-
-        userAccountDataContract.transactions(msg.sender).push(transaction);
+        require(account.tokenBalance >= amount, "Insufficient token balance");
         
+        uint collateralBalance =  account.collateralBalance + amount;
+        uint tokenBalance = account.tokenBalance - amount;
+        uint borrowedAmount = acccount.borrowedAmount;
+        uint usdcBalance = account.usdcBalance;
+        uint interestIndex = account.interestIndex;
+        bool isActive = account.isActive;
+
+        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+
+
+
+        userAccountDataContract.addTransaction(msg.sender, amount, "Deposit");
+
         token.transferFrom(msg.sender, address(this), amount);
         emit Deposit(msg.sender, amount);
     }
@@ -53,65 +57,69 @@ contract LendingPool is Ownable {
          UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         uint256 remainder = token.balanceOf(msg.sender) - amount;
         require(account.tokenBalance >= amount, "Insufficient balance");
+        require(account.collateralBalance >= amount, "Insufficient token balance");
         require(remainder >= account.collateralBalance, "Collaterral in use balance");
-        account.tokenBalance += amount;
-        account.collateralBalance -= amount;
+       
+
+        uint collateralBalance =  account.collateralBalance - amount;
+        uint tokenBalance = account.tokenBalance + amount;
+        uint borrowedAmount = acccount.borrowedAmount;
+        uint usdcBalance = account.usdcBalance;
+        uint interestIndex = account.interestIndex;
+        bool isActive = account.isActive;
+
+        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
 
 
-         UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
-            amount: amount,
-            transactionType: "Withdrawal",
-            timestamp: block.timestamp,
-            user: msg.sender
-        });
-
-        userAccountDataContract.transactions(msg.sender).push(transaction);
-
+        userAccountDataContract.addTransaction(msg.sender, amount, "Withdrawal");
 
         token.transfer(msg.sender, amount);
         emit Withdrawal(msg.sender, amount);
     }
 
     function borrow(uint256 amount) external {
-    require(amount > 0, "Amount must be greater than 0");
-     UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
-    require(account.collateralBalance >= amount, "Insufficient collateral");
+        require(amount > 0, "Amount must be greater than 0");
+        UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
+        require(account.collateralBalance >= amount, "Insufficient collateral");
 
-    uint256 poolBalance = usdc.balanceOf(address(this));
-    require(poolBalance >= amount, "Insufficient liquidity in the pool");
+        uint256 poolBalance = usdc.balanceOf(address(this));
+        require(poolBalance >= amount, "Insufficient liquidity in the pool");
 
-    account.borrowedAmount += amount;
-    account.usdcBalance += amount;
 
-     UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
-            amount: amount,
-            transactionType: "Borrow",
-            timestamp: block.timestamp,
-            user: msg.sender
-        });
+        uint collateralBalance =  account.collateralBalance;
+        uint tokenBalance = account.tokenBalance;
+        uint borrowedAmount = acccount.borrowedAmount + amount;
+        uint usdcBalance = account.usdcBalance + amount;
+        uint interestIndex = account.interestIndex;
+        bool isActive = account.isActive;
 
-        userAccountDataContract.transactions(msg.sender).push(transaction);
+        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
 
-    usdc.transfer(msg.sender, amount);
-    emit Borrow(msg.sender, amount);
+        userAccountDataContract.addTransaction(msg.sender, amount, "Borrow");
+
+
+        usdc.transfer(msg.sender, amount);
+        emit Borrow(msg.sender, amount);
     }
 
     function repay(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
          UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
+        require(account.borrowedAmount >= amount, "Insufficient balance");
         require(account.usdcBalance >= amount, "Insufficient balance");
         require(usdc.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
-        account.borrowedAmount -= amount;
-        account.usdcBalance -= amount;
 
-         UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
-            amount: amount,
-            transactionType: "Repay",
-            timestamp: block.timestamp,
-            user: msg.sender
-        });
+         uint collateralBalance =  account.collateralBalance;
+        uint tokenBalance = account.tokenBalance;
+        uint borrowedAmount = acccount.borrowedAmount - amount;
+        uint usdcBalance = account.usdcBalance - amount;
+        uint interestIndex = account.interestIndex;
+        bool isActive = account.isActive;
 
-        userAccountDataContract.transactions(msg.sender).push(transaction);
+        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+
+        userAccountDataContract.addTransaction(msg.sender, amount, "Repay");
+
 
         usdc.transferFrom(msg.sender, address(this), amount);
         emit Repay(msg.sender, amount);
@@ -122,17 +130,21 @@ contract LendingPool is Ownable {
         require(amount > 0, "Amount must be greater than 0");
          UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.collateralBalance >= amount, "Insufficient collateral");
+        require(account.borrowedAmount >= amount, "Insufficient balance");
         account.borrowedAmount -= amount;
         account.collateralBalance -= amount;
 
-            UserAccountData.Transaction memory transaction = UserAccountData.Transaction({
-                amount: amount,
-                transactionType: "Repay",
-                timestamp: block.timestamp,
-                user: msg.sender
-            });
+         uint collateralBalance =  account.collateralBalance - amount;
+        uint tokenBalance = account.tokenBalance;
+        uint borrowedAmount = acccount.borrowedAmount -amount;
+        uint usdcBalance = account.usdcBalance;
+        uint interestIndex = account.interestIndex;
+        bool isActive = account.isActive;
 
-            userAccountDataContract.transactions(msg.sender).push(transaction);
+        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+
+        userAccountDataContract.addTransaction(msg.sender, amount, "Repay");
+
         token.transferFrom(msg.sender, address(this), amount);
         emit Repay(msg.sender, amount);
     }

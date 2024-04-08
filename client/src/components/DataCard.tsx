@@ -2,6 +2,7 @@ import { Coins } from "lucide-react";
 import { FC, useState } from "react";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
 import { Input } from "./ui/input";
 import {
   Select,
@@ -10,16 +11,105 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "./ui/label";
-import { Checkbox } from "./ui/checkbox";
+import { useWriteContract } from "wagmi";
+import { LendingPoolAbi, LendingPollAddress, UsdcAbi, UsdcAddress } from "@/abi";
+import { parseEther } from "viem";
+import Loading from "./Loading";
+// import { Label } from "./ui/label";
+// import { Checkbox } from "./ui/checkbox";
 
 interface DataCardProps {
   name: string;
-  amount: number;
+  amount: string;
   type: "supply" | "borrow";
 }
 const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number | string>(0);
+  const { toast } = useToast();
+  const { isPending, writeContract } = useWriteContract();
+  
+
+  function handleWithdraw() {
+
+    writeContract(
+      {
+        abi: LendingPoolAbi,
+        address: LendingPollAddress,
+        functionName: "withdraw",
+        args: [parseEther(`${amount}`)],
+      },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          toast({
+            title: "Success",
+            description:
+              `You deposoit of ${amount} was successful`,
+          });
+
+        },
+        onError: (err) => {
+          console.log(err.message);
+          toast({
+            title: "Error",
+            description: err.message,
+          });
+        },
+      }
+    );
+
+  }
+  function handleRepay() {
+    writeContract(
+      {
+        abi: UsdcAbi,
+        address: UsdcAddress,
+        functionName: "approve",
+        args: [LendingPollAddress, parseEther(`${amount}`)],
+      },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          writeContract(
+            {
+              abi: LendingPoolAbi,
+              address: LendingPollAddress,
+              functionName: "repay",
+              args: [parseEther(`${amount}`)],
+            },
+            {
+              onSuccess: (data) => {
+                console.log(data);
+                toast({
+                  title: "Success",
+                  description:
+                    `You repay of ${amount} was successful`,
+                });
+
+              },
+              onError: (err) => {
+                console.log(err.message);
+                toast({
+                  title: "Error",
+                  description: err.message,
+                });
+              },
+            }
+          );
+        },
+        onError: (err) => {
+          console.log(err.message);
+          toast({
+            title: "Error",
+            description: err.message,
+          });
+        },
+      }
+    );
+  }
+
+  if (isPending) return <Loading loading={isPending} />;
+
   return (
     <div className="flex items-center justify-between">
       <Coins className="w-8 h-8 text-dark_green" />
@@ -69,7 +159,7 @@ const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
               </div>
             </div>
           </div>
-          {
+          {/* {
             type === "borrow" && (
 
                 <div className="flex items-center space-x-2">
@@ -82,8 +172,13 @@ const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
             </Label>
           </div>
               )
-            }
-          <Button className="w-full bg-primary_blue hover:bg-primary_blue text-white font-Jakarta font-bold text-lg py-2 rounded-lg">
+            } */}
+          <Button
+           disabled={value === 0 || value === "0" || value === ""}
+           onClick={() => {
+             type === "supply" ? handleWithdraw() : handleRepay();
+           }}
+           className="w-full bg-primary_blue hover:bg-primary_blue text-white font-Jakarta font-bold text-lg py-2 rounded-lg">
             {type === "supply" ? "Withdraw" : "Repay"}
           </Button>
         </DialogContent>

@@ -6,8 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Define ERC20 token
 contract PAPUSDC is ERC20, Ownable {
-    constructor(uint256 initialSupply) ERC20("PAPUSDC", "PUSDC") Ownable(msg.sender) {
-         _mint(msg.sender, initialSupply * 10**decimals());
+    constructor() ERC20("PAPUSDC", "PUSDC") Ownable(msg.sender) {
     }
 
     function mint(address to, uint256 amount) external onlyOwner {

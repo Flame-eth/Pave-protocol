@@ -6,8 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Define ERC20 token
 contract PAPCoin is ERC20, Ownable {
-     constructor(uint256 initialSupply) ERC20("PAPCoin", "PAP") Ownable(msg.sender) {
-        _mint(msg.sender, initialSupply * 10**decimals());
+     constructor() ERC20("PAPCoin", "PAP") Ownable(msg.sender) {
     }
 
     mapping(address => bool) public minted;
@@ -15,7 +14,7 @@ contract PAPCoin is ERC20, Ownable {
     function mint(address to, uint256 amount) external {
         require(minted[to] == false, "User already minted");
         minted[to] = true;
-        _mint(to, amount * 10**decimals());
+        _mint(to, amount);
 
     }
 

@@ -34,12 +34,12 @@ async function main() {
 
     // Deploy Token contract
     const Token = await hre.ethers.getContractFactory('PAPCoin');
-    const token = await Token.deploy(1000000);
+    const token = await Token.deploy();
     await token.deployed();
 
     // Deploy USDC contract
     const USDC = await hre.ethers.getContractFactory('PAPUSDC');
-    const usdc = await USDC.deploy(1000000);
+    const usdc = await USDC.deploy();
     await usdc.deployed();
 
     // Deploy UserAccountData contract
