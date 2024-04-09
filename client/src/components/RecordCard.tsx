@@ -9,13 +9,6 @@ import {
 import { Coins, PlusSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "./ui/button";
 import DataCard from "./DataCard";
@@ -52,7 +45,6 @@ interface RecordCardProps {
 const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
   const [amount, setAmount] = useState<number | string>("");
 
-  const [coin, setCoin] = useState<string>("PAPCoin");
   const [registerHash, setRegisterHash] = useState<`0x${string}`>();
   const [approveSupplyHash, setApproveSupplyHash] = useState<`0x${string}`>();
   const [depositHash, setDepositHash] = useState<`0x${string}`>();
@@ -305,30 +297,23 @@ const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
                 className=" flex-1 text-lg leading-10 border-none focus-visible:ring-transparent text-dark_green font-Jakarta font-medium ring-transparent no-spinners"
               />
               <div className="flex gap-1 flex-col">
-                <Select
-                  value={coin}
-                  onValueChange={(e) => {
-                    setCoin(e);
-                  }}
-                >
-                  <SelectTrigger className="w-fit border-none text-primary_blue outline-none focus:ring-transparent focus-visible:ring-transparent focus-visible:outline-none font-Jakarta font-bold text-lg">
-                    <Coins className="w-6 h-6 text-dark_gree text-primary_blue" />
-                    <SelectValue
-                      defaultChecked={true}
-                      defaultValue="PAPCoin"
-                      placeholder="PAPCoin"
-                      className=" font-Jakarta font-bold text-xl"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PAPCoin">PAPCoin</SelectItem>
-                    <SelectItem value="PAPUSDC">PAPUSDC</SelectItem>
-                  </SelectContent>
-                </Select>
+
+                <div className="w-fit flex gap-2 border-none text-primary_blue outline-none focus:ring-transparent focus-visible:ring-transparent focus-visible:outline-none font-Jakarta font-bold text-lg">
+                <Coins className="w-6 h-6 text-dark_gree text-primary_blue" />
+                {
+                  type === "supply" ? (
+                    <p>PAPCoin</p>
+                  ) : (
+                    <p >PAPUSDC</p>
+
+                  )
+                }
+
+                </div>
                 <div className="flex gap-2 justify-between items-center">
                   <p className="text-dark_green text-sm">
                     Balance:{" "}
-                    {coin === "PAPCoin"
+                    {type === "supply"
                       ? web3Data?.data?.length &&
                         formatEther(web3Data?.data[0] as bigint)
                       : web3Data?.data?.length &&
@@ -336,9 +321,9 @@ const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
                   </p>
                   <p
                     onClick={() => {
-                      if (coin === "PAPCoin" && web3Data?.data?.length) {
+                      if (type === "supply" && web3Data?.data?.length) {
                         setAmount(formatEther(web3Data?.data[0] as bigint));
-                      } else if (coin === "PAPUSDC" && web3Data?.data?.length) {
+                      } else if (type === "borrow" && web3Data?.data?.length) {
                         setAmount(formatEther(web3Data?.data[0] as bigint));
                       }
                     }}

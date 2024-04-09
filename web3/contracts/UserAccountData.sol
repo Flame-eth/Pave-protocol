@@ -46,6 +46,9 @@ contract UserAccountData is Ownable {
     
     accounts[user] = newUser;
 
+
+    addTransaction(msg.sender, 1000 * 10** token.decimals(), "register");
+
     token.mint(user, 1000 * 10** token.decimals());
     }
 
@@ -68,6 +71,10 @@ contract UserAccountData is Ownable {
         account.usdcBalance = usdcBalance;
         account.interestIndex = interestIndex;
         account.isActive = isActive;
+    }
+
+    function getTransactions(address user) external view returns (Transaction[] memory) {
+        return transactions[user];
     }
 
 

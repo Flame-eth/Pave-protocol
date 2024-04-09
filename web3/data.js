@@ -26,8 +26,8 @@
 
 {/*
 Deploying contracts with the account: 0xBb1d5e7Eae302DA22D89B5e87FD619dA8ee47ab7
-Token deployed to: 0xBb0cE38D1297F1897ECE50Aea4a058956571049D
-USDC deployed to: 0xA8A0B0B2Eb68D3AE85bcD10d1D1FF3b24bbf6f60
-UserAccountData deployed to: 0x5825125bB9E41024E99efe9c7E000BCD1db2fAdF
-LendingPool deployed to: 0x66E538DDaB496EeA68893599C7070e68d766058D
+Token deployed to: 0x37a185B3Aff052Ec2cBDBfeb624c1e909d3764D0
+USDC deployed to: 0xEea007Ca00E9D685E026D554E3AA7bd0cC6aFBaf
+UserAccountData deployed to: 0x8Ce964De7932599619dA04Dc298A8a8ef76c919e
+LendingPool deployed to: 0xa854920A1390fF5dd8E99E1258af5102607f1682
 */}

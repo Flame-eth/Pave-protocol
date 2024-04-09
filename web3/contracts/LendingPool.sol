@@ -24,7 +24,6 @@ contract LendingPool is Ownable {
         token = PAPCoin(_token);
         usdc = PAPUSDC(_usdc);
         userAccountDataContract = UserAccountData(_userAccountDataContract);
-        usdc._mint(address(this), 1000000 * 10**usdc.decimals());
         // interestRate = _interestRate;
     }
 
@@ -83,8 +82,8 @@ contract LendingPool is Ownable {
         UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.collateralBalance >= amount, "Insufficient collateral");
 
-        uint256 poolBalance = usdc.balanceOf(address(this));
-        require(poolBalance >= amount, "Insufficient liquidity in the pool");
+        // uint256 poolBalance = usdc.balanceOf(address(this));
+        // require(poolBalance >= amount, "Insufficient liquidity in the pool");
 
 
         uint collateralBalance =  account.collateralBalance;

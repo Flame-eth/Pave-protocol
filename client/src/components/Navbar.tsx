@@ -61,7 +61,7 @@ const Navbar: FC = () => {
                 />
               </SheetTrigger>
             </div>
-            <div className="flex items-center justify-between w-full gap-20 xl:gap-[108px]">
+            <div className="flex items-center justify-between w-full gap-10 xl:gap-[108px]">
               <div className="flex items-center gap-3 w-full">
                 {/* <img src={Logo} alt="" className="h-10 w-7" /> */}
                 <p className="font-Jakarta text-white text-base font-semibold sm:text-xl sm:font-normal sm:leading-7 ">

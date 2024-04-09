@@ -1,17 +1,10 @@
 import { Coins } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { LendingPoolAbi, LendingPollAddress, UsdcAbi, UsdcAddress } from "@/abi";
 import { parseEther } from "viem";
 import Loading from "./Loading";
@@ -27,7 +20,24 @@ const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
   const [value, setValue] = useState<number | string>(0);
   const { toast } = useToast();
   const { isPending, writeContract } = useWriteContract();
+
   
+  const [withdrawHash, setWithdrawHash] = useState<`0x${string}`>();
+  const [approveRepayHash, setAppproveRepayHash] = useState<`0x${string}`>();
+  const [repayHash, setRepayHash] = useState<`0x${string}`>();
+  
+  const { isLoading: withdrawLoading, isSuccess: withdrawConfirmed } =
+  useWaitForTransactionReceipt({
+    hash: withdrawHash,
+  });
+  const { isLoading: approveRepayLoading, isSuccess: approveRepayConfirmed } =
+  useWaitForTransactionReceipt({
+    hash: approveRepayHash,
+  });
+  const { isLoading: repayLoading, isSuccess: repayConfirmed } =
+  useWaitForTransactionReceipt({
+    hash: repayHash,
+  });
 
   function handleWithdraw() {
 
@@ -36,16 +46,13 @@ const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
         abi: LendingPoolAbi,
         address: LendingPollAddress,
         functionName: "withdraw",
-        args: [parseEther(`${amount}`)],
+        args: [parseEther(`${value}`)],
       },
       {
         onSuccess: (data) => {
-          console.log(data);
-          toast({
-            title: "Success",
-            description:
-              `You deposoit of ${amount} was successful`,
-          });
+          // console.log(data);
+          setWithdrawHash(data)
+         
 
         },
         onError: (err) => {
@@ -65,37 +72,13 @@ const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
         abi: UsdcAbi,
         address: UsdcAddress,
         functionName: "approve",
-        args: [LendingPollAddress, parseEther(`${amount}`)],
+        args: [LendingPollAddress, parseEther(`${value}`)],
       },
       {
         onSuccess: (data) => {
-          console.log(data);
-          writeContract(
-            {
-              abi: LendingPoolAbi,
-              address: LendingPollAddress,
-              functionName: "repay",
-              args: [parseEther(`${amount}`)],
-            },
-            {
-              onSuccess: (data) => {
-                console.log(data);
-                toast({
-                  title: "Success",
-                  description:
-                    `You repay of ${amount} was successful`,
-                });
-
-              },
-              onError: (err) => {
-                console.log(err.message);
-                toast({
-                  title: "Error",
-                  description: err.message,
-                });
-              },
-            }
-          );
+          // console.log(data);
+          setAppproveRepayHash(data)
+          
         },
         onError: (err) => {
           console.log(err.message);
@@ -108,7 +91,60 @@ const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
     );
   }
 
-  if (isPending) return <Loading loading={isPending} />;
+  useEffect(() => {
+    if(withdrawConfirmed) {
+      toast({
+        title: "Success",
+        description:
+          `You withdrawal of ${value} was submitted successfully`,
+      });
+    }
+  }, [withdrawConfirmed])
+
+
+  useEffect(() => {
+    if(approveRepayConfirmed) {
+      writeContract(
+        {
+          abi: LendingPoolAbi,
+          address: LendingPollAddress,
+          functionName: "repay",
+          args: [parseEther(`${value}`)],
+        },
+        {
+          onSuccess: (data) => {
+            setRepayHash(data);
+            
+          },
+          onError: (err) => {
+            console.log(err.message);
+            toast({
+              title: "Error",
+              description: err.message,
+            });
+          },
+        }
+      );
+    }
+  }, [approveRepayConfirmed])
+
+
+  useEffect(() => {
+    if(repayConfirmed) {
+      toast({
+        title: "Success",
+        description:
+          `You repay of ${value} was successful`,
+      });
+
+    }
+  }, [repayConfirmed])
+
+
+
+
+
+  if (isPending || withdrawLoading || approveRepayLoading || repayLoading) return <Loading loading={isPending || withdrawLoading || approveRepayLoading || repayLoading} />;
 
   return (
     <div className="flex items-center justify-between">
@@ -136,43 +172,40 @@ const DataCard: FC<DataCardProps> = ({ name, amount, type }) => {
               className=" flex-1 text-lg leading-10 border-none focus-visible:ring-transparent text-dark_green font-Jakarta font-medium ring-transparent no-spinners"
             />
             <div className="flex gap-1 flex-col">
-              <Select>
-                <SelectTrigger className="w-fit border-none text-primary_blue outline-none focus:ring-transparent focus-visible:ring-transparent focus-visible:outline-none font-Jakarta font-bold text-lg">
-                  <Coins className="w-6 h-6 text-dark_gree text-primary_blue" />
-                  <SelectValue
-                    defaultChecked={true}
-                    defaultValue="PAPCoin"
-                    placeholder="PAPCoin"
-                    className=" font-Jakarta font-bold text-xl"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PAPCoin">PAPCoin</SelectItem>
-                  <SelectItem value="PAPUSDC">PAPUSDC</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="flex gap-1 justify-between items-center">
-                <p className="text-dark_green text-sm">Balance: {0}</p>
-                <p className="text-dark_green/50 hover:text-dark_green hover:font- text-sm cursor-pointer">
-                  MAX
-                </p>
-              </div>
+            <div className="flex gap-1 flex-col">
+
+<div className="w-fit flex gap-2 border-none text-primary_blue outline-none focus:ring-transparent focus-visible:ring-transparent focus-visible:outline-none font-Jakarta font-bold text-lg">
+<Coins className="w-6 h-6 text-dark_gree text-primary_blue" />
+{
+  type === "supply" ? (
+    <p>PAPCoin</p>
+  ) : (
+    <p >PAPUSDC</p>
+
+  )
+}
+
+</div>
+<div className="flex gap-2 justify-between items-center">
+                  <p className="text-dark_green text-sm">
+                   {
+                    type === "supply" ? "Collateral" : "Borrowed" 
+                   } : {amount}
+                  </p>
+                  <p
+                    onClick={() => {
+                     setValue(amount)
+                    }}
+                    className="text-dark_green/50 hover:text-dark_green hover:font- text-sm cursor-pointer"
+                  >
+                    MAX
+                  </p>
+                </div>
             </div>
           </div>
-          {/* {
-            type === "borrow" && (
 
-                <div className="flex items-center space-x-2">
-            <Checkbox id="terms" />
-            <Label
-              htmlFor="terms"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-              Repay with collateral
-            </Label>
           </div>
-              )
-            } */}
+        
           <Button
            disabled={value === 0 || value === "0" || value === ""}
            onClick={() => {
