@@ -6,7 +6,7 @@ module.exports = {
     networks: {
         hardhat: {},
         scrollSepolia: {
-            url: 'https://sepolia-rpc.scroll.io/' || '',
+            url: "https://scroll-testnet.rpc.grove.city/v1/a7a7c8e2" || 'https://sepolia-rpc.scroll.io/' || '',
             accounts: {
                 mnemonic: process.env.MNEMONIC || '',
                 path: "m/44'/60'/0'/0",

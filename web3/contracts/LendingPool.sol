@@ -24,6 +24,7 @@ contract LendingPool is Ownable {
         token = PAPCoin(_token);
         usdc = PAPUSDC(_usdc);
         userAccountDataContract = UserAccountData(_userAccountDataContract);
+        usdc._mint(address(this), 1000000 * 10**usdc.decimals());
         // interestRate = _interestRate;
     }
 
@@ -37,12 +38,12 @@ contract LendingPool is Ownable {
         
         uint collateralBalance =  account.collateralBalance + amount;
         uint tokenBalance = account.tokenBalance - amount;
-        uint borrowedAmount = acccount.borrowedAmount;
+        uint borrowedAmount = account.borrowedAmount;
         uint usdcBalance = account.usdcBalance;
         uint interestIndex = account.interestIndex;
         bool isActive = account.isActive;
 
-        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+        userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
 
 
@@ -63,12 +64,12 @@ contract LendingPool is Ownable {
 
         uint collateralBalance =  account.collateralBalance - amount;
         uint tokenBalance = account.tokenBalance + amount;
-        uint borrowedAmount = acccount.borrowedAmount;
+        uint borrowedAmount = account.borrowedAmount;
         uint usdcBalance = account.usdcBalance;
         uint interestIndex = account.interestIndex;
         bool isActive = account.isActive;
 
-        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+        userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
 
         userAccountDataContract.addTransaction(msg.sender, amount, "Withdrawal");
@@ -88,12 +89,12 @@ contract LendingPool is Ownable {
 
         uint collateralBalance =  account.collateralBalance;
         uint tokenBalance = account.tokenBalance;
-        uint borrowedAmount = acccount.borrowedAmount + amount;
+        uint borrowedAmount = account.borrowedAmount + amount;
         uint usdcBalance = account.usdcBalance + amount;
         uint interestIndex = account.interestIndex;
         bool isActive = account.isActive;
 
-        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+        userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
         userAccountDataContract.addTransaction(msg.sender, amount, "Borrow");
 
@@ -111,12 +112,12 @@ contract LendingPool is Ownable {
 
          uint collateralBalance =  account.collateralBalance;
         uint tokenBalance = account.tokenBalance;
-        uint borrowedAmount = acccount.borrowedAmount - amount;
+        uint borrowedAmount = account.borrowedAmount - amount;
         uint usdcBalance = account.usdcBalance - amount;
         uint interestIndex = account.interestIndex;
         bool isActive = account.isActive;
 
-        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+        userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
         userAccountDataContract.addTransaction(msg.sender, amount, "Repay");
 
@@ -131,17 +132,14 @@ contract LendingPool is Ownable {
          UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.collateralBalance >= amount, "Insufficient collateral");
         require(account.borrowedAmount >= amount, "Insufficient balance");
-        account.borrowedAmount -= amount;
-        account.collateralBalance -= amount;
-
-         uint collateralBalance =  account.collateralBalance - amount;
+        uint collateralBalance =  account.collateralBalance - amount;
         uint tokenBalance = account.tokenBalance;
-        uint borrowedAmount = acccount.borrowedAmount -amount;
+        uint borrowedAmount = account.borrowedAmount -amount;
         uint usdcBalance = account.usdcBalance;
         uint interestIndex = account.interestIndex;
         bool isActive = account.isActive;
 
-        userAccountDataContract.updateAccount(address, collatetalBalance, tokenBalance, borrowedAmount, usdcBalance, interestIndex, isActive);
+        userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
         userAccountDataContract.addTransaction(msg.sender, amount, "Repay");
 

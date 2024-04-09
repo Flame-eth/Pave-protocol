@@ -24,6 +24,7 @@ import {
   useReadContract,
   useReadContracts,
   useWriteContract,
+  useWaitForTransactionReceipt,
 } from "wagmi";
 import {
   LendingPollAddress,
@@ -48,13 +49,14 @@ interface RecordCardProps {
   title: string;
   type: "supply" | "borrow";
 }
-const RecordCard: FC<RecordCardProps> = ({
-  title,
-  type,
-}) => {
+const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
   const [amount, setAmount] = useState<number | string>("");
 
   const [coin, setCoin] = useState<string>("PAPCoin");
+  const [registerHash, setRegisterHash] = useState<`0x${string}`>();
+  const [approveSupplyHash, setApproveSupplyHash] = useState<`0x${string}`>();
+  const [depositHash, setDepositHash] = useState<`0x${string}`>();
+  const [borrowHash, setBorrowHash] = useState<`0x${string}`>();
 
   const [userData, setUserData] = useState<{
     borrowedAmount: string;
@@ -90,6 +92,22 @@ const RecordCard: FC<RecordCardProps> = ({
     functionName: "getAccount",
     args: [address],
   });
+  const { isLoading: registerLoading, isSuccess: registerConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: registerHash,
+    });
+  const { isLoading: approveSupplyLoading, isSuccess: approveSupplyConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: approveSupplyHash,
+    });
+  const { isLoading: depositLoading, isSuccess: depositConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: depositHash,
+    });
+  const { isLoading: borrowLoading, isSuccess: borrowConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: borrowHash,
+    });
 
   function handleRegister() {
     writeContract(
@@ -100,12 +118,8 @@ const RecordCard: FC<RecordCardProps> = ({
         args: [address],
       },
       {
-        onSuccess: () => {
-          toast({
-            title: "Success",
-            description:
-              "You have been registered successfully and received 1000 PAPCoin",
-          });
+        onSuccess: (data) => {
+          setRegisterHash(data);
         },
         onError: (err) => {
           toast({
@@ -127,33 +141,8 @@ const RecordCard: FC<RecordCardProps> = ({
       },
       {
         onSuccess: (data) => {
-          console.log(data);
-          writeContract(
-            {
-              abi: LendingPoolAbi,
-              address: LendingPollAddress,
-              functionName: "deposit",
-              args: [parseEther(`${amount}`)],
-            },
-            {
-              onSuccess: (data) => {
-                console.log(data);
-                toast({
-                  title: "Success",
-                  description:
-                    `You deposoit of ${amount} was successful`,
-                });
-
-              },
-              onError: (err) => {
-                console.log(err.message);
-                toast({
-                  title: "Error",
-                  description: err.message,
-                });
-              },
-            }
-          );
+          // console.log(data);
+          setApproveSupplyHash(data);
         },
         onError: (err) => {
           console.log(err.message);
@@ -167,12 +156,27 @@ const RecordCard: FC<RecordCardProps> = ({
   }
 
   function handleBorrow() {
-    writeContract({
-      abi: LendingPoolAbi,
-      address: LendingPollAddress,
-      functionName: "borrow",
-      args: [parseEther(`${amount}`)],
-    });
+    writeContract(
+      {
+        abi: LendingPoolAbi,
+        address: LendingPollAddress,
+        functionName: "borrow",
+        args: [parseEther(`${amount}`)],
+      },
+      {
+        onSuccess: (data) => {
+          // console.log(data);
+          setBorrowHash(data);
+        },
+        onError: (err) => {
+          console.log(err.message);
+          toast({
+            title: "Error",
+            description: err.message,
+          });
+        },
+      }
+    );
   }
 
   useEffect(() => {
@@ -186,20 +190,84 @@ const RecordCard: FC<RecordCardProps> = ({
   }, [error, toast]);
 
   useEffect(() => {
-    // console.log(user.data);
-    const account = user.data as AccountData;
-    // console.log(account)
-    const data = {
-      borrowedAmount: formatEther(account?.borrowedAmount),
-      collateralBalance: formatEther(account?.collateralBalance),
-      tokenBalance: formatEther(account?.tokenBalance),
-    };
+    if (user.data) {
+      console.log(user.data);
+      const account = user.data as AccountData;
+      // console.log(account)
+      const data = {
+        borrowedAmount: formatEther(account?.borrowedAmount),
+        collateralBalance: formatEther(account?.collateralBalance),
+        tokenBalance: formatEther(account?.tokenBalance),
+      };
 
-    // console.log(data);
-    setUserData(data);
-  }, [user]);
+      console.log(data);
+      setUserData(data);
+    }
+  }, [user.data]);
 
-  if (isPending) return <Loading loading={isPending} />;
+  useEffect(() => {
+    if (registerConfirmed) {
+      toast({
+        title: "Success",
+        description:
+          "Request submitted. You will receiv 1000 PAPCoin once transactions is confirmed",
+      });
+    }
+  }, [registerConfirmed]);
+
+  useEffect(() => {
+    if (approveSupplyConfirmed) {
+      writeContract(
+        {
+          abi: LendingPoolAbi,
+          address: LendingPollAddress,
+          functionName: "deposit",
+          args: [parseEther(`${amount}`)],
+        },
+        {
+          onSuccess: (data) => {
+            setDepositHash(data);
+          },
+          onError: (err) => {
+            console.log(err.message);
+            toast({
+              title: "Error",
+              description: err.message,
+            });
+          },
+        }
+      );
+    }
+  }, [approveSupplyConfirmed]);
+
+  useEffect(() => {
+    if (depositConfirmed || borrowConfirmed) {
+      web3Data.refetch();
+      toast({
+        title: "Success",
+        description: `You ${type} of ${amount} was successful`,
+      });
+    }
+  }, [depositConfirmed || borrowConfirmed]);
+
+  if (
+    isPending ||
+    registerLoading ||
+    approveSupplyLoading ||
+    depositLoading ||
+    borrowLoading
+  )
+    return (
+      <Loading
+        loading={
+          isPending ||
+          registerLoading ||
+          approveSupplyLoading ||
+          depositLoading ||
+          borrowLoading
+        }
+      />
+    );
 
   // console.log(web3Data.data, web3Data.error);
   return (
@@ -298,8 +366,12 @@ const RecordCard: FC<RecordCardProps> = ({
           {
             supply: (
               <div className="">
-                { userData?.collateralBalance !== "0" ? (
-                  <DataCard type="supply" name="PAPCoin" amount={userData?.collateralBalance as string} />
+                {userData?.collateralBalance !== "0" ? (
+                  <DataCard
+                    type="supply"
+                    name="PAPCoin"
+                    amount={userData?.collateralBalance as string}
+                  />
                 ) : (
                   <p className=" text-dark_green/70 font-normal text-base">
                     Nothing supplied yet
@@ -309,8 +381,12 @@ const RecordCard: FC<RecordCardProps> = ({
             ),
             borrow: (
               <div className="">
-                {userData?.borrowedAmount !== "0"  ? (
-                  <DataCard type="borrow" name="PAPUSDCd" amount={userData?.borrowedAmount as string} />
+                {userData?.borrowedAmount !== "0" ? (
+                  <DataCard
+                    type="borrow"
+                    name="PAPUSDCd"
+                    amount={userData?.borrowedAmount as string}
+                  />
                 ) : (
                   <p className=" text-dark_green/70 font-normal text-base">
                     Nothing borrowed yet
