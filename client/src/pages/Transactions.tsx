@@ -12,9 +12,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatEther } from "viem";
+import { useToast } from "@/components/ui/use-toast";
+
 
 const Transactions: FC = () => {
   const { address } = useAccount();
+  const { toast } = useToast();
 
   const { data: unknownData, error } = useReadContract({
     abi: UserAccountDataAbi,
@@ -26,13 +29,17 @@ const Transactions: FC = () => {
   const data = unknownData as {
     user: string;
     amount: bigint;
+    tokenName: string;
     transactionType: string;
     timestamp: bigint;
   }[];
 
   useEffect(() => {
-    console.log(data, error);
-  }, [data, error]);
+    toast({
+      title: "Error",
+      description: error.message,
+    });
+  }, [error]);
 
   return (
     <div className=" h-screen ">
@@ -50,7 +57,7 @@ const Transactions: FC = () => {
             <TableRow>
               <TableHead className="w-[100px]">Type</TableHead>
               <TableHead>Date</TableHead>
-              {/* <TableHead>Amount</TableHead> */}
+              <TableHead>Token</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
@@ -64,7 +71,9 @@ const Transactions: FC = () => {
                 <TableCell>
                   {new Date(Number(tx.timestamp) * 1000).toLocaleString()}
                 </TableCell>
-                {/* <TableCell>Credit Card</TableCell> */}
+                <TableCell>
+                  {tx.tokenName}
+                </TableCell>
                 <TableCell className="text-right">
                   {formatEther(tx.amount)}
                 </TableCell>
