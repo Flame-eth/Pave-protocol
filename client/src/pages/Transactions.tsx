@@ -35,10 +35,12 @@ const Transactions: FC = () => {
   }[];
 
   useEffect(() => {
-    toast({
+    if(error) {
+      toast({
       title: "Error",
       description: error.message,
     });
+  }
   }, [error]);
 
   return (
