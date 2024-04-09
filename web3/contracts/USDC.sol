@@ -9,12 +9,12 @@ contract PAPUSDC is ERC20, Ownable {
     constructor() ERC20("PAPUSDC", "PUSDC") Ownable(msg.sender) {
     }
 
-    function mint(address to, uint256 amount) external onlyOwner {
-        _mint(to, amount * 10**decimals());
+    function mint(address to, uint256 amount) external {
+        _mint(to, amount);
     }
 
       function burn(uint256 amount) external onlyOwner() {
-        _burn(address(0), amount * 10**decimals());
+        _burn(address(0), amount);
     }
 
 }

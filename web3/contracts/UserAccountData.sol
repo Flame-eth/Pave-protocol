@@ -19,6 +19,7 @@ contract UserAccountData is Ownable {
         address user;
         uint256 amount;
         uint256 timestamp;
+        string tokenName;
         string transactionType;
     }
 
@@ -47,16 +48,17 @@ contract UserAccountData is Ownable {
     accounts[user] = newUser;
 
 
-    addTransaction(msg.sender, 1000 * 10** token.decimals(), "register");
+    addTransaction(msg.sender, 1000 * 10** token.decimals(), "PAPCoin", "Register");
 
     token.mint(user, 1000 * 10** token.decimals());
     }
 
-    function addTransaction(address user, uint256 amount, string memory transactionType) public {
+    function addTransaction(address user, uint256 amount,  string memory tokenName, string memory transactionType) public {
         Transaction memory newTransaction = Transaction({
             user: user,
             amount: amount,
             timestamp: block.timestamp,
+            tokenName: tokenName,
             transactionType: transactionType
         });
 

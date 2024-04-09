@@ -46,7 +46,7 @@ contract LendingPool is Ownable {
 
 
 
-        userAccountDataContract.addTransaction(msg.sender, amount, "Deposit");
+        userAccountDataContract.addTransaction(msg.sender, amount, "PAPCoin", "Deposit");
 
         token.transferFrom(msg.sender, address(this), amount);
         emit Deposit(msg.sender, amount);
@@ -71,7 +71,7 @@ contract LendingPool is Ownable {
         userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
 
-        userAccountDataContract.addTransaction(msg.sender, amount, "Withdrawal");
+        userAccountDataContract.addTransaction(msg.sender, amount, "PAPCoin", "Withdrawal");
 
         token.transfer(msg.sender, amount);
         emit Withdrawal(msg.sender, amount);
@@ -82,10 +82,6 @@ contract LendingPool is Ownable {
         UserAccountData.Account memory account = userAccountDataContract.getAccount(msg.sender);
         require(account.collateralBalance >= amount, "Insufficient collateral");
 
-        // uint256 poolBalance = usdc.balanceOf(address(this));
-        // require(poolBalance >= amount, "Insufficient liquidity in the pool");
-
-
         uint collateralBalance =  account.collateralBalance;
         uint tokenBalance = account.tokenBalance;
         uint borrowedAmount = account.borrowedAmount + amount;
@@ -95,10 +91,10 @@ contract LendingPool is Ownable {
 
         userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
-        userAccountDataContract.addTransaction(msg.sender, amount, "Borrow");
+        userAccountDataContract.addTransaction(msg.sender, amount, "PAPUSDC", "Borrow");
 
 
-        usdc.transfer(msg.sender, amount);
+        usdc.mint(msg.sender, amount);
         emit Borrow(msg.sender, amount);
     }
 
@@ -118,7 +114,7 @@ contract LendingPool is Ownable {
 
         userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
-        userAccountDataContract.addTransaction(msg.sender, amount, "Repay");
+        userAccountDataContract.addTransaction(msg.sender, amount, "PAPUSDC", "Repay");
 
 
         usdc.transferFrom(msg.sender, address(this), amount);
@@ -140,7 +136,7 @@ contract LendingPool is Ownable {
 
         userAccountDataContract.updateAccount(msg.sender, collateralBalance, borrowedAmount, tokenBalance, usdcBalance, interestIndex, isActive);
 
-        userAccountDataContract.addTransaction(msg.sender, amount, "Repay");
+        userAccountDataContract.addTransaction(msg.sender, amount,"PAPCoin", "Repay");
 
         token.transferFrom(msg.sender, address(this), amount);
         emit Repay(msg.sender, amount);

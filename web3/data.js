@@ -1,33 +1,21 @@
-// Deploying contracts with the account: 0xBb1d5e7Eae302DA22D89B5e87FD619dA8ee47ab7
-// Token deployed to: 0xC1CFB0eaF74729014E78c8cD90c52Be1922480D8
-// USDC deployed to: 0x0a0E99796f9671DB4Df676dE32189bda60951ab1
-// UserAccountData deployed to: 0x8072e1D3943307a19CDF63811DCd5487fAf617a0
-// LendingPool deployed to: 0x16f91Fe33597240588e97fDe814B32289bC5a6f4
-
-
-
-
-// PAPCoin: https://sepolia.scrollscan.com/token/0xC1CFB0eaF74729014E78c8cD90c52Be1922480D8
-//  https://sepolia.scrollscan.com/address/0xC1CFB0eaF74729014E78c8cD90c52Be1922480D8#code
-
-
-// PAPUSDC: https://sepolia.scrollscan.com/token/0x0a0E99796f9671DB4Df676dE32189bda60951ab1
-// https://sepolia.scrollscan.com/address/0x0a0E99796f9671DB4Df676dE32189bda60951ab1#code
-
-
-// UserAccountData: https://sepolia.scrollscan.com/address/0x8072e1D3943307a19CDF63811DCd5487fAf617a0#code
-
-
-// LendingPool: https://sepolia.scrollscan.com/address/0x16f91Fe33597240588e97fDe814B32289bC5a6f4#code
-
-
-
-
-
 {/*
 Deploying contracts with the account: 0xBb1d5e7Eae302DA22D89B5e87FD619dA8ee47ab7
-Token deployed to: 0x37a185B3Aff052Ec2cBDBfeb624c1e909d3764D0
-USDC deployed to: 0xEea007Ca00E9D685E026D554E3AA7bd0cC6aFBaf
-UserAccountData deployed to: 0x8Ce964De7932599619dA04Dc298A8a8ef76c919e
-LendingPool deployed to: 0xa854920A1390fF5dd8E99E1258af5102607f1682
+The contract 0xFE774a5546a8F7c648087a8906ea6336aEC50e10 has already been verified on Etherscan.
+https://sepolia.scrollscan.com/address/0xFE774a5546a8F7c648087a8906ea6336aEC50e10#code
+The contract 0x9C72c8B8312805d09E3BB353D7e1bBe2fed05CbD has already been verified on Etherscan.
+https://sepolia.scrollscan.com/address/0x9C72c8B8312805d09E3BB353D7e1bBe2fed05CbD#code
+The contract 0x5DABb87a4c1555960580f64FDb3DfCa3E4E2288b has already been verified on Etherscan.
+https://sepolia.scrollscan.com/address/0x5DABb87a4c1555960580f64FDb3DfCa3E4E2288b#code
+Successfully submitted source code for contract
+contracts/LendingPool.sol:LendingPool at 0xc9b9bF014E8679B18873Fbb17885643256B97561
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract LendingPool on the block explorer.
+https://sepolia.scrollscan.com/address/0xc9b9bF014E8679B18873Fbb17885643256B97561#code
+
+Token deployed to: 0xFE774a5546a8F7c648087a8906ea6336aEC50e10
+USDC deployed to: 0x9C72c8B8312805d09E3BB353D7e1bBe2fed05CbD
+UserAccountData deployed to: 0x5DABb87a4c1555960580f64FDb3DfCa3E4E2288b
+LendingPool deployed to: 0xc9b9bF014E8679B18873Fbb17885643256B97561
+
 */}

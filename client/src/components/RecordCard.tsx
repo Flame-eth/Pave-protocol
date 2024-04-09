@@ -183,7 +183,7 @@ const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
 
   useEffect(() => {
     if (user.data) {
-      console.log(user.data);
+      // console.log(user.data);
       const account = user.data as AccountData;
       // console.log(account)
       const data = {
@@ -192,7 +192,7 @@ const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
         tokenBalance: formatEther(account?.tokenBalance),
       };
 
-      console.log(data);
+      // console.log(data);
       setUserData(data);
     }
   }, [user.data]);
@@ -202,7 +202,7 @@ const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
       toast({
         title: "Success",
         description:
-          "Request submitted. You will receiv 1000 PAPCoin once transactions is confirmed",
+          "Request submitted. You will receive 1000 PAPCoin once transactions is confirmed",
       });
     }
   }, [registerConfirmed]);
@@ -237,7 +237,7 @@ const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
       web3Data.refetch();
       toast({
         title: "Success",
-        description: `You ${type} of ${amount} was successful`,
+        description: `You ${type} of ${amount} was submitted successfully`,
       });
     }
   }, [depositConfirmed || borrowConfirmed]);
@@ -369,7 +369,7 @@ const RecordCard: FC<RecordCardProps> = ({ title, type }) => {
                 {userData?.borrowedAmount !== "0" ? (
                   <DataCard
                     type="borrow"
-                    name="PAPUSDCd"
+                    name="PAPUSDC"
                     amount={userData?.borrowedAmount as string}
                   />
                 ) : (
